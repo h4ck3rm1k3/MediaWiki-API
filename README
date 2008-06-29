@@ -1,0 +1,44 @@
+MediaWiki-API
+
+This module provides an interface between perl and the MediaWiki API
+(http://www.mediawiki.org/wiki/API) allowing creation of scripts to automate
+editing and extraction of data from MediaWiki driven sites like Wikipedia.
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+SUPPORT AND DOCUMENTATION
+
+After installing, you can find documentation for this module with the
+perldoc command.
+
+    perldoc MediaWiki::API
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=MediaWiki-API
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/MediaWiki-API
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/MediaWiki-API
+
+    Search CPAN
+        http://search.cpan.org/dist/MediaWiki-API
+
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2008 Jools Smyth
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
