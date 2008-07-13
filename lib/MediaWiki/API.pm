@@ -7,6 +7,7 @@ use strict;
 
 use LWP::UserAgent;
 use JSON::XS;
+use Encode;
 
 use constant {
   ERR_NO_ERROR => 0,
@@ -26,13 +27,15 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
-our $VERSION  = "0.08";
+our $VERSION  = "0.09";
 
 =head1 SYNOPSIS
+
+This module provides an interface between Perl and the MediaWiki API (http://www.mediawiki.org/wiki/API) allowing creation of scripts to automate editing and extraction of data from MediaWiki driven sites like Wikipedia.
 
   use MediaWiki::API;
 
@@ -188,6 +191,8 @@ Call the MediaWiki API interface. Parameters are passed as a hashref which are d
 
 sub api {
   my ($self, $query, $options) = @_;
+
+  $self->_encode_hashref_utf8($query);
 
   return $self->_error(ERR_CONFIG,"You need to give the URL to the mediawiki API php.")
     unless $self->{config}->{api_url};
@@ -508,6 +513,15 @@ sub download {
     unless ( $response->code == 200 );
 
   return $response->decoded_content;
+}
+
+# encodes a hash (passed by reference) to utf-8
+# used to encode parameters before being passed to the api
+sub _encode_hashref_utf8 {
+  my ($self, $ref) = @_;
+  for my $key ( keys %{$ref} ) {
+    $ref->{$key} = encode_utf8( $ref->{$key} );
+  }
 }
 
 # gets a token for a specified parameter and sets it in the query for the call

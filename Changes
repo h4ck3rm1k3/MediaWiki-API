@@ -1,5 +1,8 @@
 Revision history for MediaWiki-API
 
+0.09    2008-07-13
+        Automatically encode API parameter values to utf-8.
+
 0.08    2008-06-30
         A lot of releases for one day I know. Minor stuff again, but some dependencies had been left out
         of the makefile which mean't the module was failing some automatic testing. Also made the config
