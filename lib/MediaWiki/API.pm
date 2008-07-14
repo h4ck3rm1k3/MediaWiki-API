@@ -27,11 +27,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =cut
 
-our $VERSION  = "0.09";
+our $VERSION  = "0.10";
 
 =head1 SYNOPSIS
 
@@ -43,15 +43,23 @@ This module provides an interface between Perl and the MediaWiki API (http://www
   $mw->{config}->{api_url} = 'http://en.wikipedia.org/w/api.php';
 
   # log in to the wiki
-  $mw->login( { lgname => 'test', lgpassword => 'test' } );
+  $mw->login( { lgname => 'username', lgpassword => 'password' } );
+    || die $mw->{error}->{code} . ': ' . $mw->{error}->{details};
 
   # get a list of articles in category
-  my @articles = $mw->list ( { action => 'query',
+  my $articles = $mw->list ( {
+    action => 'query',
     list => 'categorymembers',
-    cmtitle => 'http://en.wikipedia.org/wiki/Category:Perl',
-    aplimit=>'max' } );
+    cmtitle => 'Category:Perl',
+    cmlimit => 'max' } )
+    || die $mw->{error}->{code} . ': ' . $mw->{error}->{details};
 
-  # user info
+  # and print the article titles
+  foreach (@{$articles}) {
+      print "$_->{title}\n";
+  }
+
+  # get user info
   my $userinfo = $mw->api( {
     action => 'query',
     meta => 'userinfo',
@@ -145,7 +153,8 @@ Logs in to a MediaWiki. Parameters are those used by the MediaWiki API (http://w
   my $mw = MediaWiki::API->new( { api_url => 'http://en.wikipedia.org/w/api.php' }  );
 
   #log in to the wiki
-  $mw->login( {lgname => 'username', lgpassword => 'password' } );
+  $mw->login( {lgname => 'username', lgpassword => 'password' } )
+    || die $mw->{error}->{code} . ': ' . $mw->{error}->{details};
 
 =cut
 
@@ -157,7 +166,7 @@ sub login {
 
   # reassign hash reference to the login section
   my $login = $ref->{login};
-  return $self->_error( ERR_LOGIN, 'Login Failure: ' . $login->{result} )
+  return $self->_error( ERR_LOGIN, 'Login Failure - ' . $login->{result} )
     unless ( $login->{result} eq 'Success' );
 
   # everything was ok so return the reference
@@ -177,11 +186,13 @@ Call the MediaWiki API interface. Parameters are passed as a hashref which are d
   my $titles = $mw->api( {
     action => 'query',
     titles => 'Albert Einstein',
-    prop => 'langlinks' } )
+    prop => 'langlinks',
+    lllimit => 'max' } )
     || die $mw->{error}->{code} . ': ' . $mw->{error}->{details};
 
   my ($pageid,$langlinks) = each ( %{ $titles->{query}->{pages} } );
 
+  binmode STDOUT, ':utf8';
   foreach ( @{ $langlinks->{langlinks} } ) {
     print "$_->{'*'}\n";
   }
@@ -352,11 +363,13 @@ The value of max specifies the maximum "queries" which will be used to pull data
 
 If you wish to process large lists, for example the articles in a large category, you can pass a hook function, which will be passed a reference to an array of results for each query connection.
 
-  # process the first 400 articles in the main namespace in the category "Living people".
+  binmode STDOUT, ':utf8';
+
+  # process the first 400 articles in the main namespace in the category "Surnames".
   # get 100 at a time, with a max of 4 and pass each 100 to our hook.
   $mw->list ( { action => 'query',
                 list => 'categorymembers',
-                cmtitle => 'Category:Living people',
+                cmtitle => 'Category:Surnames',
                 cmnamespace => 0,
                 cmlimit=>'100' },
               { max => 4, hook => \&print_articles } )

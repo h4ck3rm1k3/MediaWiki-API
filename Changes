@@ -1,5 +1,8 @@
 Revision history for MediaWiki-API
 
+0.10    2008-07-14
+        Some fixes to documentation examples (Were not updated after some changes in the interface).
+
 0.09    2008-07-13
         Automatically encode API parameter values to utf-8.
 
