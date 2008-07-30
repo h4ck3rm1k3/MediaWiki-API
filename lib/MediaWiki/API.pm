@@ -27,11 +27,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =cut
 
-our $VERSION  = "0.10";
+our $VERSION  = "0.11";
 
 =head1 SYNOPSIS
 
@@ -177,6 +177,8 @@ sub login {
 
 Call the MediaWiki API interface. Parameters are passed as a hashref which are described on the MediaWiki API page (http://www.mediawiki.org/wiki/API). returns a hashref with the results of the call or undef on failure with the error code and details stored in MediaWiki::API->{error}->{code} and MediaWiki::API->{error}->{details}.
 
+  binmode STDOUT, ':utf8';
+
   # get the name of the site
   if ( my $ref = $mw->api( { action => 'query', meta => 'siteinfo' } ) ) {
     print $ref->{query}->{general}->{sitename};
@@ -192,7 +194,6 @@ Call the MediaWiki API interface. Parameters are passed as a hashref which are d
 
   my ($pageid,$langlinks) = each ( %{ $titles->{query}->{pages} } );
 
-  binmode STDOUT, ':utf8';
   foreach ( @{ $langlinks->{langlinks} } ) {
     print "$_->{'*'}\n";
   }
@@ -571,7 +572,10 @@ sub _get_set_tokens {
 
   my ($pageid, $pageref) = each %{ $ref->{query}->{pages} };
 
-  return $self->_error( ERR_EDIT, "Unable to $action page '$title'. Page does not exist.") if ( defined ( $pageref->{missing} ) );
+  print Dumper $pageref;
+
+  # if the page doesn't exist and we aren't editing/creating a new page then return an error
+  return $self->_error( ERR_EDIT, "Unable to $action page '$title'. Page does not exist.") if ( defined $pageref->{missing} && $action ne 'edit' );
 
   if ( $action eq 'rollback' ) {
     $query->{token} = @{ $pageref->{revisions} }[0]->{$action.'token'};
@@ -580,12 +584,12 @@ sub _get_set_tokens {
     $query->{token} = $pageref->{$action.'token'};
   }
 
-  # need timestamp of last revision for edits to avoid edit conflicts
-  if ( $action eq 'edit' ) {
+  # need timestamp of last revision for edits to avoid edit conflicts (if there are previous revisions)
+  if ( $action eq 'edit' && defined $pageref->{revisions} ) {
     $query->{basetimestamp} = @{ $pageref->{revisions} }[0]->{timestamp};
   }
 
-  return $self->_error( ERR_EDIT, 'Unable to get an edit token ($page).' ) unless ( defined ( $query->{token} ) );
+  return $self->_error( ERR_EDIT, 'Unable to get an edit token ($page).' ) unless ( defined $query->{token} );
 
   # cache the token. rollback tokens are specific for the page name and last edited user so can not be cached.
   if ( $action ne 'rollback' ) {
