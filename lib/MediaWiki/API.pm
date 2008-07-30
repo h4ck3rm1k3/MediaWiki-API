@@ -27,11 +27,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =cut
 
-our $VERSION  = "0.11";
+our $VERSION  = "0.12";
 
 =head1 SYNOPSIS
 
@@ -571,8 +571,6 @@ sub _get_set_tokens {
   return undef unless ( my $ref = $self->api( { action => 'query', prop => 'info|revisions', $token => $action, titles => $title } ) );
 
   my ($pageid, $pageref) = each %{ $ref->{query}->{pages} };
-
-  print Dumper $pageref;
 
   # if the page doesn't exist and we aren't editing/creating a new page then return an error
   return $self->_error( ERR_EDIT, "Unable to $action page '$title'. Page does not exist.") if ( defined $pageref->{missing} && $action ne 'edit' );
