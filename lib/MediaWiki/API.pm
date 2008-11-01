@@ -10,7 +10,7 @@ use JSON::XS;
 use Encode;
 use Carp;
 
-use Data::Dumper;
+#use Data::Dumper;
 
 use constant {
   ERR_NO_ERROR => 0,
@@ -37,11 +37,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.18
+Version 0.19
 
 =cut
 
-our $VERSION  = "0.18";
+our $VERSION  = "0.19";
 
 =head1 SYNOPSIS
 
