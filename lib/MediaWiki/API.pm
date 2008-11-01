@@ -10,7 +10,7 @@ use JSON::XS;
 use Encode;
 use Carp;
 
-#use Data::Dumper;
+use Data::Dumper;
 
 use constant {
   ERR_NO_ERROR => 0,
@@ -37,11 +37,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.17
+Version 0.18
 
 =cut
 
-our $VERSION  = "0.17";
+our $VERSION  = "0.18";
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ Configuration options are
 
 An example for the on_error configuration could be something like:
 
-  $mw->{on_error} = \&on_error;
+  $mw->{config}->{on_error} = \&on_error;
 
   sub on_error {
     print "Error code: " . $mw->{error}->{code} . "\n";
@@ -265,7 +265,7 @@ sub api {
 
       # if we have reached our maximum retries, then deal with any errors error
       if ( $try == $retries ) {
-        return $self->_error(ERR_HTTP,"An HTTP failure occurred when accessing $self->{config}->{api_url} after " . ($try+1) . " attempt(s)")
+        return $self->_error(ERR_HTTP, $response->status_line . " : error occurred when accessing $self->{config}->{api_url} after " . ($try+1) . " attempt(s)"  )
           unless $response->is_success;
 
         return $self->_error(ERR_HTTP,"$self->{config}->{api_url} returned a zero length string")
