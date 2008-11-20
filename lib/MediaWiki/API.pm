@@ -37,11 +37,11 @@ MediaWiki::API - Provides a Perl interface to the MediaWiki API (http://www.medi
 
 =head1 VERSION
 
-Version 0.20
+Version 0.21
 
 =cut
 
-our $VERSION  = "0.20";
+our $VERSION  = "0.21";
 
 =head1 SYNOPSIS
 
@@ -97,7 +97,7 @@ Configuration options are
 
 =item * on_error = Function reference to call if an error occurs in the module.
 
-=item * retries = Integer value; The number of retries to send an API request if an http error or JSON decoding error occurs. Defaults to 0 (try only once - don't retry). If max_retries is set to 4, and the wiki is down, the error won't be reported until after the 65th connection attempt. 
+=item * retries = Integer value; The number of retries to send an API request if an http error or JSON decoding error occurs. Defaults to 0 (try only once - don't retry). If max_retries is set to 4, and the wiki is down, the error won't be reported until after the 5th connection attempt. 
 
 =item * retry_delay = Integer value in seconds; The amount of time to wait before retrying a request if an HTTP error or JSON decoding error occurs.
 
@@ -153,6 +153,8 @@ Other useful parameters and objects in the MediaWiki::API object are
 =item * MediaWiki::API->{ua} = The LWP::UserAgent object. You could modify this to get or modify the cookies (MediaWiki::API->{ua}->cookie_jar) or to change the UserAgent string sent by this perl module (MediaWiki::API->{ua}->agent)
 
 =item * MediaWiki::API->{response} = the last response object returned by the LWP::UserAgent after an API request.
+
+=back
 
 =cut
 
