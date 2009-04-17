@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                MediaWiki-API
-version:             0.24
+version:             0.25
 abstract:            Provides a Perl interface to the MediaWiki API (http://www.mediawiki.org/wiki/API)
 license:             ~
 author:              
