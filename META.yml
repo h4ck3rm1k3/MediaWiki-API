@@ -1,8 +1,8 @@
 --- #YAML:1.0
 name:                MediaWiki-API
-version:             0.25
+version:             0.27
 abstract:            Provides a Perl interface to the MediaWiki API (http://www.mediawiki.org/wiki/API)
-license:             ~
+license:             GPL-3+
 author:              
     - Jools Smyth <buzz@exotica.org.uk>
 generated_by:        ExtUtils::MakeMaker version 6.42
@@ -10,7 +10,7 @@ distribution_type:   module
 requires:     
     Carp:                          0
     Encode:                        0
-    JSON::XS:                      0
+    JSON:                          0
     LWP::UserAgent:                0
     Test::More:                    0
 meta-spec:
