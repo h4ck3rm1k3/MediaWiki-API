@@ -912,6 +912,10 @@ sub _get_set_tokens {
   }
   return undef unless $ref;
 
+  die "missing pages" unless $ref->{query}->{pages};
+  my $pages_type = ref $ref->{query}->{pages} ;
+  die "wrong type $pages_type should be HASH" unless $pages_type eq "HASH";
+
   my ($pageid, $pageref) = each %{ $ref->{query}->{pages} };
 
   # if the page doesn't exist and we aren't editing/creating a new page then return an error
